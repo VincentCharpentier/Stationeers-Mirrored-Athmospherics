@@ -1,0 +1,36 @@
+Problem with input / output arrows after flipping a prefab:
+They are not pointing in the right direction and the spacing from the prefab is increased.
+
+These are combinations I tried to solve it, the header in uppercase describe was transformation was applied to the 
+Connection instance > Transform > Parent, which is a sphere collider (eg. SphereColliderPipeConnectionInput1Trigger).
+The state on each line is the state of the Connection > Transform itself and the result obtained
+
+
+PARENT FLIPPED & ROTATED:
+none:          arrow direction & spacing ok / connection not working
+flip:          arrow direction & spacing ok / connection not working
+rotate:        connection ok / arrow direction & spacing incorrect
+flip + rotate: connection ok / arrow direction & spacing incorrect
+                 
+PARENT ROTATED:
+none:          arrow direction & spacing ok / connection not working
+flip:          arrow direction & spacing ok / connection not working
+rotate:        connection ok / arrow direction & spacing incorrect
+flip + rotate: connection ok / arrow direction & spacing incorrect
+
+PARENT FLIPPED:
+none:          connection ok / arrow direction & spacing incorrect
+flip:          ASSUMING SAME AS ABOVE
+rotate:        arrow direction & spacing ok / connection not working
+flip + rotate: ASSUMING SAME AS ABOVE
+
+PARENT NONE:
+none:          connection ok / arrow direction & spacing incorrect
+flip:          ASSUMING SAME AS ABOVE
+rotate:        arrow direction & spacing ok / connection not working
+flip + rotate: ASSUMING SAME AS ABOVE
+
+conclusion:
+- flipping always useless here
+- rotation fix visual bug but introduce functional bug for connections
+

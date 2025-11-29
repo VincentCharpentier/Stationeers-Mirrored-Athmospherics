@@ -1,0 +1,12 @@
+obj/*
+externals/*
+bin/Debug/*
+Properties/*
+/.vs
+*.dll
+*.zip
+*.lock
+*.vsidx
+*.v2
+*.1
+*.user
