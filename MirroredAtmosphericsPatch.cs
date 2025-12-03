@@ -63,7 +63,7 @@ namespace MirroredAtmospherics.Scripts
                 mirrorDisplayName = "Filtration (Mirrored)",
                 mirrorDescription =
                     "Mirrored version of the standard {THING:StructureFiltration}.",
-                postfix = (Thing mirroredDevice) => {
+                postfix = mirroredDevice => {
                     FlipTransform(mirroredDevice.FindTransform("SwitchOnOff"));
                     // filtration mirroring tweaks
                     FlipTransform(mirroredDevice.FindTransform("InfoScreen"));
@@ -77,7 +77,7 @@ namespace MirroredAtmospherics.Scripts
                 mirrorDisplayName = "Air Conditioner (Mirrored)",
                 mirrorDescription =
                     "Mirrored version of the standard {THING:StructureAirConditioner}.",
-                postfix = (Thing mirroredDevice) => {
+                postfix = mirroredDevice => {
                     FlipTransform(mirroredDevice.FindTransform("SwitchOnOff"));
                     // air conditioner mirroring tweaks
                     // flip info screen (aesthetics)
@@ -93,7 +93,7 @@ namespace MirroredAtmospherics.Scripts
                 mirrorDisplayName = "Electrolyzer (Mirrored)",
                 mirrorDescription =
                     "Mirrored version of the standard {THING:StructureElectrolyzer}.",
-                postfix = (Thing mirroredDevice) => {
+                postfix = mirroredDevice => {
                     FlipTransform(mirroredDevice.FindTransform("SwitchOnOff"));
                     // flip info screen (aesthetics)
                     FlipTransform(mirroredDevice.FindTransform("InfoScreen"));
@@ -106,7 +106,7 @@ namespace MirroredAtmospherics.Scripts
                 mirrorDisplayName = "H2 Combustor (Mirrored)",
                 mirrorDescription =
                     "Mirrored version of the standard {THING:H2Combustor}.",
-                postfix = (Thing mirroredDevice) => {
+                postfix = mirroredDevice => {
                     FlipTransform(mirroredDevice.FindTransform("SwitchOnOff"));
                     // flip info screen (aesthetics)
                     FlipTransform(mirroredDevice.FindTransform("InfoScreen"));
@@ -119,7 +119,7 @@ namespace MirroredAtmospherics.Scripts
                 mirrorDisplayName = "Nitrolyzer (Mirrored)",
                 mirrorDescription =
                     "Mirrored version of the standard {THING:StructureNitrolyzer}",
-                postfix = (Thing mirroredDevice) => {
+                postfix = mirroredDevice => {
                     FlipTransform(mirroredDevice.FindTransform("SwitchOnOff"));
                     // flip info screen (aesthetics)
                     FlipTransform(mirroredDevice.FindTransform("InfoScreen"));
@@ -132,7 +132,7 @@ namespace MirroredAtmospherics.Scripts
                 mirrorDisplayName = "Condensation Chamber (Mirrored)",
                 mirrorDescription =
                     "Mirrored version of the {THING:StructureCondensationChamber}",
-                postfix = (Thing mirroredDevice) => {
+                postfix = mirroredDevice => {
                     // flip info screen (aesthetics)
                     FlipPhaseChangeScreenTransform(mirroredDevice.FindTransform("ScreenNoShadow"));
                     // update input / output arrow display
@@ -148,7 +148,7 @@ namespace MirroredAtmospherics.Scripts
                 mirrorDisplayName = "Evaporation Chamber (Mirrored)",
                 mirrorDescription =
                     "Mirrored version of the {THING:StructureEvaporationChamber}",
-                postfix = (Thing mirroredDevice) => {
+                postfix = mirroredDevice => {
                     // flip info screen (aesthetics)
                     FlipPhaseChangeScreenTransform(mirroredDevice.FindTransform("ScreenNoShadow"));
                     // update input / output arrow display
@@ -166,10 +166,8 @@ namespace MirroredAtmospherics.Scripts
         private static readonly GameObject HiddenParent = new GameObject("~HiddenGameObject");
 
         // filtering / search optimization
-        private static List<MultiConstructor> Constructors = new List<MultiConstructor>();
-        private static List<Thing> Devices = new List<Thing>();
-        // Wireframe caching
-        private static Dictionary<string, List<Edge>> WireframeData;
+        private static readonly List<MultiConstructor> Constructors = new List<MultiConstructor>();
+        private static readonly List<Thing> Devices = new List<Thing>();
 
         [HarmonyPatch(typeof(Prefab), "LoadAll")]
         [HarmonyPrefix]
@@ -180,8 +178,6 @@ namespace MirroredAtmospherics.Scripts
             UnityEngine.Object.DontDestroyOnLoad(HiddenParent.gameObject);
             HiddenParent.SetActive(value: false);
 
-            Log("Loading wireframe data");
-            WireframeData = WireframeStorage.LoadWireframeData();
             Log("Prefiltering assets");
             // Load wireframe data
             // prefilter data for load time optimization
@@ -230,13 +226,13 @@ namespace MirroredAtmospherics.Scripts
             }
 
             // add to atmospherics constructor
-            AddToConstructor(mirrorDef, mirroredDevice, "ItemKitAtmospherics");
+            AddToConstructor(mirrorDef, mirroredDevice);
 
             // run mirror specific postfix
             mirrorDef.postfix(mirroredDevice);
         }
 
-        static private void AddToConstructor(MirrorDefinition mirrorDef, Thing mirroredDevice, string ctorName)
+        static private void AddToConstructor(MirrorDefinition mirrorDef, Thing mirroredDevice)
         {
             var ctors = FindConstructors(mirrorDef.deviceName);
             foreach (var deviceCtor in ctors)
@@ -300,22 +296,12 @@ namespace MirroredAtmospherics.Scripts
 
                 // update blueprint wireframe
                 Wireframe blueprintWireframe = mirroredThing.Blueprint.GetComponent<Wireframe>();
-                if (blueprintWireframe != null)
+                // Flip wireframe
+                blueprintWireframe?.WireframeEdges.ForEach(edge =>
                 {
-                    List<Edge> edges;
-                    // try getting cached wireframe data
-                    if (!WireframeData.TryGetValue(mirrorDef.mirrorName, out edges))
-                    {
-                        Log($"Regenerating wireframe for {mirrorDef.mirrorName}...");
-                        // regenerate wireframe edges
-                        WireframeGenerator wfGen = new WireframeGenerator(mirroredThing.Blueprint.transform);
-
-                        edges = wfGen.Edges;
-                        WireframeData.Add(mirrorDef.mirrorName, edges);
-                        WireframeStorage.SaveWireframeData(WireframeData);
-                    }
-                    blueprintWireframe.WireframeEdges = edges;
-                }
+                    edge.Point1 = new Vector3(-edge.Point1.x, edge.Point1.y, edge.Point1.z);
+                    edge.Point2 = new Vector3(-edge.Point2.x, edge.Point2.y, edge.Point2.z);
+                });
             }
 
             /// Add to the game as an asset
