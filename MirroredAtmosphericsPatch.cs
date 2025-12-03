@@ -126,7 +126,40 @@ namespace MirroredAtmospherics.Scripts
                     // update input / output arrow display
                     InvertInputOutput(mirroredDevice);
                 }
-            }
+            },
+            // Phase change devices
+            new MirrorDefinition("StructureCondensationChamber") {
+                mirrorDisplayName = "Condensation Chamber (Mirrored)",
+                mirrorDescription =
+                    "Mirrored version of the {THING:StructureCondensationChamber}",
+                postfix = (Thing mirroredDevice) => {
+                    // flip info screen (aesthetics)
+                    FlipPhaseChangeScreenTransform(mirroredDevice.FindTransform("ScreenNoShadow"));
+                    // update input / output arrow display
+                    InvertInputOutput(mirroredDevice);
+                    // restore increase/decrease buttons position on setting wheel
+                    FlipTransform(mirroredDevice.FindTransform("BoxColliderButton1Trigger"));
+                    FlipTransform(mirroredDevice.FindTransform("BoxColliderButton2Trigger"));
+                    // fix switch collider display
+                    FlipTransform(mirroredDevice.FindTransform("SwitchOnOff"));
+                }
+            },
+            new MirrorDefinition("StructureEvaporationChamber") {
+                mirrorDisplayName = "Evaporation Chamber (Mirrored)",
+                mirrorDescription =
+                    "Mirrored version of the {THING:StructureEvaporationChamber}",
+                postfix = (Thing mirroredDevice) => {
+                    // flip info screen (aesthetics)
+                    FlipPhaseChangeScreenTransform(mirroredDevice.FindTransform("ScreenNoShadow"));
+                    // update input / output arrow display
+                    InvertInputOutput(mirroredDevice);
+                    // restore increase/decrease buttons position on setting wheel
+                    FlipTransform(mirroredDevice.FindTransform("BoxColliderButton1Trigger"));
+                    FlipTransform(mirroredDevice.FindTransform("BoxColliderButton2Trigger"));
+                    // fix switch collider display
+                    FlipTransform(mirroredDevice.FindTransform("SwitchOnOff"));
+                }
+            },
         };
 
         // permanent hidden object to store the new prefabs we will create
@@ -328,6 +361,11 @@ namespace MirroredAtmospherics.Scripts
             }
         }
 
+        private static void FlipPhaseChangeScreenTransform(Transform screen)
+        {
+            FlipTransform(screen);
+            screen.localPosition = new Vector3(-.49f, screen.position.y, screen.position.z);
+        }
 
         [HarmonyPatch(typeof(Localization.LanguageFolder), nameof(Localization.LanguageFolder.LoadAll)), HarmonyPrefix]
         private static void Localization_LanguageFolder_LoadAll_Prefix(Localization.LanguageFolder __instance)
