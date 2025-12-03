@@ -1,12 +1,14 @@
 # Stationeers mod "Mirrored Athmospherics" for BepInEx.
 
 # Description:  
-Adds a mirrored variant for each atmospherics device:
+Adds a mirrored variant for each atmospherics and phase change devices:
 - Air Conditioner
 - Filtration
 - Electrolyser
 - Nitrolyser
 - H2 Combustor
+- Evaporation Chamber
+- Condensation Chamber
 
 # Instructions
 
