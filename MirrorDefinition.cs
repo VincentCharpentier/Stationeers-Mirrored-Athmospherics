@@ -43,6 +43,7 @@ namespace MirroredAtmospherics.Scripts
             /// avoids having two prefabs with the same name
             this.mirrorName = $"{deviceName}Mirrored";
             this.mirrorHash = Animator.StringToHash(this.mirrorName);
+            this.mirrorDescription = $"Mirrored version of the {{THING:{deviceName}}}";
         }
     }
 }

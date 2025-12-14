@@ -30,8 +30,6 @@ namespace MirroredAtmospherics.Scripts
         private static readonly MirrorDefinition[] atmoMirrorDefs = new[] {
             new MirrorDefinition("StructureFiltration") {
                 mirrorDisplayName = "Filtration (Mirrored)",
-                mirrorDescription =
-                    "Mirrored version of the standard {THING:StructureFiltration}.",
                 connectionsToFlip = new[]
                 {
                     new ConnectionDescription()
@@ -55,8 +53,6 @@ namespace MirroredAtmospherics.Scripts
             },
             new MirrorDefinition("StructureAirConditioner") {
                 mirrorDisplayName = "Air Conditioner (Mirrored)",
-                mirrorDescription =
-                    "Mirrored version of the standard {THING:StructureAirConditioner}.",
                 connectionsToFlip = new[]
                 {
                     new ConnectionDescription()
@@ -82,8 +78,6 @@ namespace MirroredAtmospherics.Scripts
             new MirrorDefinition("StructureElectrolyzer")
             {
                 mirrorDisplayName = "Electrolyzer (Mirrored)",
-                mirrorDescription =
-                    "Mirrored version of the standard {THING:StructureElectrolyzer}.",
                 connectionsToFlip = new[]
                 {
                     new ConnectionDescription()
@@ -106,8 +100,6 @@ namespace MirroredAtmospherics.Scripts
             new MirrorDefinition("H2Combustor")
             {
                 mirrorDisplayName = "H2 Combustor (Mirrored)",
-                mirrorDescription =
-                    "Mirrored version of the standard {THING:H2Combustor}.",
                 connectionsToFlip = new[]
                 {
                     new ConnectionDescription()
@@ -125,8 +117,6 @@ namespace MirroredAtmospherics.Scripts
             new MirrorDefinition("StructureNitrolyzer")
             {
                 mirrorDisplayName = "Nitrolyzer (Mirrored)",
-                mirrorDescription =
-                    "Mirrored version of the standard {THING:StructureNitrolyzer}",
                 connectionsToFlip = new[]
                 {
                     new ConnectionDescription()
@@ -154,8 +144,6 @@ namespace MirroredAtmospherics.Scripts
             // Phase change devices
             new MirrorDefinition("StructureCondensationChamber") {
                 mirrorDisplayName = "Condensation Chamber (Mirrored)",
-                mirrorDescription =
-                    "Mirrored version of the {THING:StructureCondensationChamber}",
                 connectionsToFlip = new[]
                 {
                     new ConnectionDescription()
@@ -186,8 +174,6 @@ namespace MirroredAtmospherics.Scripts
             },
             new MirrorDefinition("StructureEvaporationChamber") {
                 mirrorDisplayName = "Evaporation Chamber (Mirrored)",
-                mirrorDescription =
-                    "Mirrored version of the {THING:StructureEvaporationChamber}",
                 connectionsToFlip = new[]
                 {
                     new ConnectionDescription()
