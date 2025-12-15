@@ -1,4 +1,4 @@
-# Stationeers mod "Mirrored Athmospherics" for BepInEx.
+# Stationeers mod "Mirrored Atmospherics" for BepInEx.
 
 # Description:  
 Adds a mirrored variant for each atmospherics and phase change devices:
