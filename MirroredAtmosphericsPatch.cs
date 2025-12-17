@@ -241,7 +241,7 @@ namespace MirroredAtmospherics.Scripts
             },
             new MirrorDefinition("StructureLogicSorter") {
                 connectionsToFlip = new[]
-               {
+                {
                     new ConnectionDescription()
                     {
                         Type = NetworkType.Chute,
@@ -269,6 +269,14 @@ namespace MirroredAtmospherics.Scripts
                 }
             },
             new MirrorDefinition("StructureVolumePump") {
+                connectionsToFlip = new[]
+                {
+                    new ConnectionDescription()
+                    {
+                        Type = NetworkType.PowerAndData,
+                        Role = ConnectionRole.None
+                    }
+                },
                 postfix = mirroredDevice => {
                     // restore increase/decrease buttons position on setting wheel
                     FlipTransform(mirroredDevice.FindTransform("BoxColliderOnOffTrigger"));
@@ -277,6 +285,14 @@ namespace MirroredAtmospherics.Scripts
                 }
             },
             new MirrorDefinition("StructurePressureRegulator") {
+                connectionsToFlip = new[]
+                {
+                    new ConnectionDescription()
+                    {
+                        Type = NetworkType.PowerAndData,
+                        Role = ConnectionRole.None
+                    }
+                },
                 postfix = mirroredDevice => {
                     // restore increase/decrease buttons position on setting wheel
                     FlipTransform(mirroredDevice.FindTransform("BoxColliderOnOffTrigger001"));
@@ -285,6 +301,14 @@ namespace MirroredAtmospherics.Scripts
                 }
             },
             new MirrorDefinition("StructureBackPressureRegulator") {
+                connectionsToFlip = new[]
+                {
+                    new ConnectionDescription()
+                    {
+                        Type = NetworkType.PowerAndData,
+                        Role = ConnectionRole.None
+                    }
+                },
                 postfix = mirroredDevice => {
                     // restore increase/decrease buttons position on setting wheel
                     FlipTransform(mirroredDevice.FindTransform("BoxColliderOnOffTrigger003"));
@@ -293,6 +317,14 @@ namespace MirroredAtmospherics.Scripts
                 }
             },
             new MirrorDefinition("StructurePressurantValve") {
+                connectionsToFlip = new[]
+                {
+                    new ConnectionDescription()
+                    {
+                        Type = NetworkType.PowerAndData,
+                        Role = ConnectionRole.None
+                    }
+                },
                 postfix = mirroredDevice => {
                     // restore increase/decrease buttons position on setting wheel
                     FlipTransform(mirroredDevice.FindTransform("BoxColliderOnOffTrigger"));
@@ -301,6 +333,14 @@ namespace MirroredAtmospherics.Scripts
                 }
             },
             new MirrorDefinition("StructurePurgeValve") {
+                connectionsToFlip = new[]
+                {
+                    new ConnectionDescription()
+                    {
+                        Type = NetworkType.PowerAndData,
+                        Role = ConnectionRole.None
+                    }
+                },
                 postfix = mirroredDevice => {
                     // restore increase/decrease buttons position on setting wheel
                     FlipTransform(mirroredDevice.FindTransform("BoxColliderOnOffTrigger"));
@@ -309,6 +349,14 @@ namespace MirroredAtmospherics.Scripts
                 }
             },
             new MirrorDefinition("StructureLiquidVolumePump") {
+                connectionsToFlip = new[]
+                {
+                    new ConnectionDescription()
+                    {
+                        Type = NetworkType.PowerAndData,
+                        Role = ConnectionRole.None
+                    }
+                },
                 postfix = mirroredDevice => {
                     // restore increase/decrease buttons position on setting wheel
                     FlipTransform(mirroredDevice.FindTransform("BoxColliderOnOffTrigger"));
@@ -317,6 +365,14 @@ namespace MirroredAtmospherics.Scripts
                 }
             },
             new MirrorDefinition("StructureLiquidPressureRegulator") {
+                connectionsToFlip = new[]
+                {
+                    new ConnectionDescription()
+                    {
+                        Type = NetworkType.PowerAndData,
+                        Role = ConnectionRole.None
+                    }
+                },
                 postfix = mirroredDevice => {
                     // restore increase/decrease buttons position on setting wheel
                     FlipTransform(mirroredDevice.FindTransform("BoxColliderOnOffTrigger001"));
@@ -325,6 +381,14 @@ namespace MirroredAtmospherics.Scripts
                 }
             },
             new MirrorDefinition("StructureBackLiquidPressureRegulator") {
+                connectionsToFlip = new[]
+                {
+                    new ConnectionDescription()
+                    {
+                        Type = NetworkType.PowerAndData,
+                        Role = ConnectionRole.None
+                    }
+                },
                 postfix = mirroredDevice => {
                     // restore increase/decrease buttons position on setting wheel
                     FlipTransform(mirroredDevice.FindTransform("BoxColliderOnOffTrigger003"));
