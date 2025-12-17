@@ -581,45 +581,37 @@ namespace MirroredAtmospherics.Scripts
 
         static private void FindMirrorInfos()
         {
-            // find any constructors that need to change into MultiConstructors
-            for (int i = 0; i < WorldManager.Instance.SourcePrefabs.Count; i++)
+            // prefilter data for load time optimization and find mirror informations
+            for (int prefabIndex = 0; prefabIndex < WorldManager.Instance.SourcePrefabs.Count; prefabIndex++)
             {
-                var thing = WorldManager.Instance.SourcePrefabs[i];
+                var thing = WorldManager.Instance.SourcePrefabs[prefabIndex];
                 if (thing == null)
                 {
                     continue;
                 }
-
                 var ctor = thing.GetComponent<Constructor>();
-                if (ctor != null && ctor.gameObject != null)
+                var multiCtor = thing.GetComponent<MultiConstructor>();
+                if (multiCtor != null && multiCtor.Constructables != null)
+                {
+                    foreach (var mirrorDef in atmoMirrorDefs)
+                    {
+                        if (multiCtor.Constructables.Find(p => p != null && p.name == mirrorDef.deviceName) != null)
+                        {
+                            mirrorDef.constructor = multiCtor;
+                            // don't break, a multiConstructor can have multiple devices to mirror
+                        }
+                    }
+                }
+                else if (ctor != null)
                 {
                     foreach (var mirrorDef in atmoMirrorDefs)
                     {
                         if (ctor.BuildStructure != null && ctor.BuildStructure.name == mirrorDef.deviceName)
                         {
-                            ConvertConstructorToMultiConstructor(ctor, i);
+                            multiCtor = ConvertConstructorToMultiConstructor(ctor, prefabIndex);
+                            mirrorDef.constructor = multiCtor;
+                            // single constructor can only match one mirror description
                             break;
-                        }
-                    }
-                }
-            }
-
-            // prefilter data for load time optimization and find mirror informations
-            WorldManager.Instance.SourcePrefabs.ForEach(thing =>
-            {
-                if (thing == null)
-                {
-                    return;
-                }
-                var ctor = thing.GetComponent<MultiConstructor>();
-                if (ctor != null && ctor.Constructables != null)
-                {
-                    foreach (var mirrorDef in atmoMirrorDefs)
-                    {
-                        if (ctor.Constructables.Find(p => p != null && p.name == mirrorDef.deviceName) != null)
-                        {
-                            mirrorDef.constructor = ctor;
-                            // don't break, a constructor can have multiple devices to mirror
                         }
                     }
                 }
@@ -634,7 +626,7 @@ namespace MirroredAtmospherics.Scripts
                         }
                     }
                 }
-            });
+            }
         }
 
         static private void MirrorAtmosphericDevice(MirrorDefinition mirrorDef)
