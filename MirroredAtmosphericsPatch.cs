@@ -483,35 +483,6 @@ namespace MirroredAtmospherics.Scripts
             // Copy shared fields from Constructor to MultiConstructor
             CopySharedFields((Stackable)ctor, (Stackable)mctor);
 
-            // Update BuildState.Tool references and EntryQuantity
-            // This ensures structures built with MultiConstructor can properly deconstruct
-            if (buildStructure != null && buildStructure.BuildStates != null)
-            {
-                foreach (var buildState in buildStructure.BuildStates)
-                {
-                    if (buildState != null && buildState.Tool != null)
-                    {
-                        // If ToolEntry references the Constructor, update it to MultiConstructor
-                        if (buildState.Tool.ToolEntry == ctor)
-                        {
-                            buildState.Tool.ToolEntry = mctor;
-                        }
-                        // Also check ToolEntry2
-                        if (buildState.Tool.ToolEntry2 == ctor)
-                        {
-                            buildState.Tool.ToolEntry2 = mctor;
-                        }
-
-                        // Set EntryQuantity from Constructor.QuantityUsed
-                        // This ensures the correct quantity drops when deconstructing
-                        if (buildState.Tool.ToolEntry == mctor)
-                        {
-                            buildState.Tool.EntryQuantity = ctor.QuantityUsed;
-                        }
-                    }
-                }
-            }
-
             // Update SourcePrefabs to point to the MultiConstructor
             WorldManager.Instance.SourcePrefabs[prefabIndex] = mctor;
 
@@ -579,8 +550,21 @@ namespace MirroredAtmospherics.Scripts
             }
         }
 
+        struct ConstructorToConvert
+        {
+            public MirrorDefinition mirrorDef;
+            public Constructor constructor;
+            public int prefabIndex;
+            public List<CtorRefUpdate> refUpdateCallbacks;
+        }
+
+        public delegate void CtorRefUpdate(MultiConstructor newCtor);
+
         static private void FindMirrorInfos()
         {
+            List<ConstructorToConvert> ctorsToUpdate = new List<ConstructorToConvert>();
+            Dictionary<string, List<CtorRefUpdate>> refUpdateCallbacks = new Dictionary<string, List<CtorRefUpdate>>();
+
             // prefilter data for load time optimization and find mirror informations
             for (int prefabIndex = 0; prefabIndex < WorldManager.Instance.SourcePrefabs.Count; prefabIndex++)
             {
@@ -608,8 +592,13 @@ namespace MirroredAtmospherics.Scripts
                     {
                         if (ctor.BuildStructure != null && ctor.BuildStructure.name == mirrorDef.deviceName)
                         {
-                            multiCtor = ConvertConstructorToMultiConstructor(ctor, prefabIndex);
-                            mirrorDef.constructor = multiCtor;
+                            ctorsToUpdate.Add(new ConstructorToConvert()
+                            {
+                                constructor = ctor,
+                                mirrorDef = mirrorDef,
+                                prefabIndex = prefabIndex,
+                                refUpdateCallbacks = new List<CtorRefUpdate>()
+                            });
                             // single constructor can only match one mirror description
                             break;
                         }
@@ -627,6 +616,52 @@ namespace MirroredAtmospherics.Scripts
                     }
                 }
             }
+
+            // find and update references to deleted constructors
+            foreach (var thing in WorldManager.Instance.SourcePrefabs)
+            {
+                if (thing == null)
+                {
+                    continue;
+                }
+                var structure = thing.GetComponent<Structure>();
+                if (structure != null && structure.BuildStates != null)
+                {
+                    foreach (var buildState in structure.BuildStates)
+                    {
+                        var ctorToUpdateIdx = ctorsToUpdate.FindIndex(x => x.constructor.name == buildState.Tool?.ToolEntry?.name);
+                        if (ctorToUpdateIdx != -1)
+                        {
+                            var ctorToUpdate = ctorsToUpdate[ctorToUpdateIdx];
+                            ctorToUpdate.refUpdateCallbacks.Add((MultiConstructor newCtor) =>
+                            {
+                                Log($"Updating ToolEntry of {thing.name}");
+                                buildState.Tool.ToolEntry = newCtor;
+                            });
+                        }
+                        ctorToUpdateIdx = ctorsToUpdate.FindIndex(x => x.constructor.name == buildState.Tool?.ToolEntry2?.name);
+                        if (ctorToUpdateIdx != -1)
+                        {
+                            var ctorToUpdate = ctorsToUpdate[ctorToUpdateIdx];
+                            ctorToUpdate.refUpdateCallbacks.Add((MultiConstructor newCtor) =>
+                            {
+                                Log($"Updating ToolEntry2 of {thing.name}");
+                                buildState.Tool.ToolEntry2 = newCtor;
+                            });
+                        }
+                    }
+                }
+            }
+            
+            // Do constructor conversion
+            foreach (var ctorToUpdate in ctorsToUpdate)
+            {
+                Log($"Updating CTOR {ctorToUpdate.constructor.name}");
+                var mctor = ConvertConstructorToMultiConstructor(ctorToUpdate.constructor, ctorToUpdate.prefabIndex);
+                ctorToUpdate.mirrorDef.constructor = mctor;
+                ctorToUpdate.refUpdateCallbacks.ForEach(callback => callback(mctor));
+            }
+
         }
 
         static private void MirrorAtmosphericDevice(MirrorDefinition mirrorDef)
