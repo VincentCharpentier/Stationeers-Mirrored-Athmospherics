@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace MirroredAtmospherics.Scripts
 {
-    [BepInPlugin("net.Apolo.stationeers.MirroredAtmospherics.Scripts", "Mirrored Atmospherics", "0.0.6.0")]   
+    [BepInPlugin("net.Apolo.stationeers.MirroredAtmospherics.Scripts", "Mirrored Atmospherics", "0.0.6.1")]   
     public class MirroredAtmosphericsPlugin : BaseUnityPlugin
     {
         public static MirroredAtmosphericsPlugin Instance;
